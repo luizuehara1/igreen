@@ -52,7 +52,6 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
  */
 export async function getAllSocialProofs(): Promise<SocialProof[]> {
   if (!db) return [];
-  const path = 'social_proofs';
   try {
     const colRef = collection(db, 'social_proofs');
     const q = query(colRef, orderBy('createdAt', 'desc'));
@@ -62,7 +61,7 @@ export async function getAllSocialProofs(): Promise<SocialProof[]> {
       ...doc.data()
     })) as SocialProof[];
   } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, path);
+    console.warn('Falha ao listar depoimentos do Admin:', error);
     return [];
   }
 }
@@ -72,26 +71,21 @@ export async function getAllSocialProofs(): Promise<SocialProof[]> {
  */
 export async function getActiveSocialProofs(): Promise<SocialProof[]> {
   if (!db) return [];
-  const path = 'social_proofs';
   try {
     const colRef = collection(db, 'social_proofs');
-    const q = query(colRef, where('status', '==', 'Ativo'), orderBy('createdAt', 'desc'));
+    // Filtro essencial para satisfazer as regras do Firestore sem exigir indexamento customizado
+    const q = query(colRef, where('status', '==', 'Ativo'));
     const snap = await getDocs(q);
-    return snap.docs.map(doc => ({
+    const list = snap.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     })) as SocialProof[];
+    
+    // Ordenação local em memória por data de criação decrescente
+    return list.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
   } catch (error) {
-    // Se falhar porque o índice não foi construído ou por permissões, tenta carregar localmente ou faz fallback elegante
-    console.warn('Query filtrada falhou. Tentando listagem simples e filtragem local.', error);
-    try {
-      const snap = await getDocs(collection(db, 'social_proofs'));
-      const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as SocialProof[];
-      return list.filter(p => p.status === 'Ativo').sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-    } catch (errInner) {
-      handleFirestoreError(errInner, OperationType.LIST, path);
-      return [];
-    }
+    console.warn('Falha ao obter faturas ativas, usando depoimentos estáticos ou vazio:', error);
+    return [];
   }
 }
 
@@ -100,24 +94,22 @@ export async function getActiveSocialProofs(): Promise<SocialProof[]> {
  */
 export async function getFeaturedSocialProofs(): Promise<SocialProof[]> {
   if (!db) return [];
-  const path = 'social_proofs';
   try {
     const colRef = collection(db, 'social_proofs');
-    const q = query(colRef, where('status', '==', 'Ativo'), where('featured', '==', true));
+    const q = query(colRef, where('status', '==', 'Ativo'));
     const snap = await getDocs(q);
-    return snap.docs.map(doc => ({
+    const list = snap.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     })) as SocialProof[];
+    
+    // Filtra por featured e ordena localmente em memória
+    return list
+      .filter(p => p.featured === true)
+      .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
   } catch (error) {
-    console.warn('Query composta falhou. Tentando filtragem local para destaque.', error);
-    try {
-      const active = await getActiveSocialProofs();
-      return active.filter(p => p.featured === true);
-    } catch (errInner) {
-      handleFirestoreError(errInner, OperationType.LIST, path);
-      return [];
-    }
+    console.warn('Falha ao obter destaques, usando depoimentos estáticos:', error);
+    return [];
   }
 }
 

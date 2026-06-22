@@ -87,7 +87,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     }
     return DEFAULT_SETTINGS;
   } catch (error) {
-    handleFirestoreError(error, OperationType.GET, path);
+    console.warn('Falha amortecida ao buscar configurações do site, usando padrão local:', error);
     return DEFAULT_SETTINGS;
   }
 }
