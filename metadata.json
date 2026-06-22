@@ -1,0 +1,6 @@
+{
+  "name": "IGREEN Itararé/Itapeva",
+  "description": "Soluções em energia solar para residências, empresas e propriedades rurais em Itapeva, Itararé e região. Solicite seu orçamento com a IGREEN.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

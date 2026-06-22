@@ -1,0 +1,166 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "User profile with administrator privileges or status",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "description": "Admin email identifier" },
+        "role": { "type": "string", "description": "Assigned administrative role" },
+        "name": { "type": "string", "description": "Full name of the administrator" },
+        "ativo": { "type": "boolean", "description": "Active status of the administrator accounts" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of creation" }
+      },
+      "required": ["email", "name", "ativo", "createdAt"]
+    },
+    "Lead": {
+      "title": "Lead",
+      "description": "Captured customer showing interest in iGreen Solar solutions",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the prospect" },
+        "phone": { "type": "string", "description": "Contact phone number or WhatsApp of the prospect" },
+        "email": { "type": "string", "description": "Email address of the prospect" },
+        "city": { "type": "string", "description": "Prospect city" },
+        "state": { "type": "string", "description": "Prospect state" },
+        "propertyType": { "type": "string", "enum": ["residencial", "comercial", "rural"], "description": "Type of property" },
+        "monthlyBill": { "type": "number", "description": "Average monthly power cost" },
+        "averageConsumption": { "type": "number", "description": "Calculated equivalent power consumption in kWh" },
+        "message": { "type": "string", "description": "Ad-hoc message or additional observations" },
+        "source": { "type": "string", "description": "Identifies where the flow originated (Site or Simulador)" },
+        "status": { "type": "string", "description": "Processing state of the lead (initially 'Novo')" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "ISO timestamp of selection" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "ISO timestamp of last edits" }
+      },
+      "required": ["name", "phone", "city", "propertyType", "monthlyBill", "status", "source", "createdAt"]
+    },
+    "Contract": {
+      "title": "Contract",
+      "description": "Signed solar acquisition contract or active power arrangement",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "leadId": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Billing transaction log or progress financial record",
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number" },
+        "leadId": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Project": {
+      "title": "Project",
+      "description": "Engineering project implementation tracker record",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "contractId": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Proposal": {
+      "title": "Proposal",
+      "description": "Technical-commercial customized quote",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "leadId": { "type": "string" },
+        "value": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "SocialProof": {
+      "title": "SocialProof",
+      "description": "Customer results from solar system installations",
+      "type": "object",
+      "properties": {
+        "clientName": { "type": "string", "description": "Customer name" },
+        "city": { "type": "string", "description": "Customer city/municipality" },
+        "propertyType": { "type": "string", "enum": ["Residencial", "Comercial", "Rural", "Industrial"], "description": "Property category type" },
+        "imageUrl": { "type": "string", "description": "Proof photo URL" },
+        "monthlyBillBefore": { "type": "number", "description": "Prior monthly bill amount" },
+        "monthlyBillAfter": { "type": "number", "description": "Subsequent monthly bill amount" },
+        "monthlySavings": { "type": "number", "description": "Calculated value before - after" },
+        "annualSavings": { "type": "number", "description": "Calculated monthlySavings * 12" },
+        "testimonial": { "type": "string", "description": "Verbatim written story text" },
+        "systemPowerKwp": { "type": "number", "description": "System nominal power in kWp scale" },
+        "status": { "type": "string", "enum": ["Ativo", "Inativo"], "description": "Proof status toggle" },
+        "featured": { "type": "boolean", "description": "Should appear featured on the landing page" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["clientName", "city", "propertyType", "status", "featured"]
+    },
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Global settings and homepage numbers configuration",
+      "type": "object",
+      "properties": {
+        "logoUrl": { "type": "string" },
+        "faviconUrl": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "instagram": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "cityRegion": { "type": "string" },
+        "heroTitle": { "type": "string" },
+        "heroSubtitle": { "type": "string" },
+        "heroImageUrl": { "type": "string" },
+        "aboutTitle": { "type": "string" },
+        "aboutText": { "type": "string" },
+        "primaryCtaText": { "type": "string" },
+        "secondaryCtaText": { "type": "string" },
+        "footerText": { "type": "string" },
+        "projectsCompleted": { "type": "number" },
+        "totalPowerInstalled": { "type": "number" },
+        "averageSavingsPercent": { "type": "number" },
+        "cleanEnergyPercent": { "type": "number" },
+        "monthlySavingsGenerated": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "/site_settings/{documentId}": {
+      "schema": "#/entities/SiteSettings",
+      "description": "Durable site settings configurations"
+    },
+    "/social_proofs/{proofId}": {
+      "schema": "#/entities/SocialProof",
+      "description": "Saved social proofs / success stories database"
+    },
+    "/admin/{email}": {
+      "schema": "#/entities/Admin",
+      "description": "Admin privileges mapping lookup collection"
+    },
+    "/leads/{leadId}": {
+      "schema": "#/entities/Lead",
+      "description": "Leads collected from forms and online simulations"
+    },
+    "/contracts/{contractId}": {
+      "schema": "#/entities/Contract",
+      "description": "Contracts list (Admin access only)"
+    },
+    "/payments/{paymentId}": {
+      "schema": "#/entities/Payment",
+      "description": "Payments list (Admin access only)"
+    },
+    "/projects/{projectId}": {
+      "schema": "#/entities/Project",
+      "description": "Engineering installations list (Admin access only)"
+    },
+    "/proposals/{proposalId}": {
+      "schema": "#/entities/Proposal",
+      "description": "Proposals issued list (Admin access only)"
+    }
+  }
+}

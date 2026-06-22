@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the request user is active inside the admin collection
+    function isAtivoAdmin() {
+      return request.auth != null && 
+             request.auth.token != null &&
+             request.auth.token.email != null &&
+             (
+               request.auth.token.email == 'luiz.uehara1@gmail.com' ||
+               (
+                 exists(/databases/$(database)/documents/admin/$(request.auth.token.email)) &&
+                 get(/databases/$(database)/documents/admin/$(request.auth.token.email)).data.ativo == true
+               )
+             );
+    }
+
+    // Check if user is active admin AND super_admin
+    function isSuperAdmin() {
+      return request.auth != null && 
+             request.auth.token != null &&
+             request.auth.token.email != null &&
+             (
+               request.auth.token.email == 'luiz.uehara1@gmail.com' ||
+               (
+                 exists(/databases/$(database)/documents/admin/$(request.auth.token.email)) &&
+                 get(/databases/$(database)/documents/admin/$(request.auth.token.email)).data.ativo == true &&
+                 get(/databases/$(database)/documents/admin/$(request.auth.token.email)).data.super_admin == true
+               )
+             );
+    }
+
+    // Site settings rules
+    match /site_settings/{documentId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // Social proofs rules
+    match /social_proofs/{proofId} {
+      allow get: if true;
+      allow list: if resource.data.status == 'Ativo' || isSuperAdmin();
+      allow write: if isSuperAdmin();
+    }
+
+    // Leads rules
+    match /leads/{leadId} {
+      allow create: if true; // Any anonymous user can write a lead
+      allow read, update, delete: if isAtivoAdmin(); // Only authenticated active admin can read/edit/delete
+    }
+
+    // Admin rules
+    match /admin/{email} {
+      allow read: if request.auth != null && (request.auth.token.email == email || isAtivoAdmin());
+      allow write: if isAtivoAdmin();
+    }
+
+    // Contracts rules
+    match /contracts/{contractId} {
+      allow read, write: if isAtivoAdmin();
+    }
+
+    // Payments rules
+    match /payments/{paymentId} {
+      allow read, write: if isAtivoAdmin();
+    }
+
+    // Projects rules
+    match /projects/{projectId} {
+      allow read, write: if isAtivoAdmin();
+    }
+
+    // Proposals rules
+    match /proposals/{proposalId} {
+      allow read, write: if isAtivoAdmin();
+    }
+  }
+}
