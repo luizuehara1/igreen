@@ -656,6 +656,38 @@ export default function RoutePages({ currentPath, onNavigate, onAddLead, onSimul
     );
   }
 
-  // fallback empty state
-  return null;
+  // Page not found fallback (custom client-side 404 page)
+  return (
+    <div className="pt-32 pb-24 bg-white animate-fade-in text-center">
+      <div className="max-w-md mx-auto px-6">
+        <div className="w-20 h-20 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Icons.ShieldAlert className="w-10 h-10" />
+        </div>
+        <h1 className="text-4xl font-display font-black text-zinc-900 tracking-tight">
+          Página Não Encontrada
+        </h1>
+        <p className="text-zinc-500 text-sm mt-3 leading-relaxed">
+          O endereço que você tentou acessar (<strong>{currentPath}</strong>) não existe ou está temporariamente indisponível.
+        </p>
+        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <button
+            onClick={() => onNavigate('/')}
+            className="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer"
+          >
+            Voltar para o Início
+          </button>
+          {whatsappLink && (
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-[#00DB4A] hover:bg-emerald-500 text-black font-extrabold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1"
+            >
+              Suporte via WhatsApp
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
